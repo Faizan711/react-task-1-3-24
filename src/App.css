@@ -1,13 +1,16 @@
 body{
+  height: 100vh;
   box-sizing: border-box;
   font-family: "Montserrat", sans-serif;
   font-optical-sizing: auto;
   margin: 0;
   padding: 0;
+  background: linear-gradient(to bottom right, #cce6ff, #ffffff);
 }
 
 h1 {
   text-align: center;
+  color: #007bff;
 }
 
 p {

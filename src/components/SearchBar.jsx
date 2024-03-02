@@ -1,15 +1,17 @@
 // src/components/SearchBar.js
 import React, { useState } from 'react';
+import '../App.css'
 
 function SearchBar({ onSearch }) {
   const [city, setCity] = useState('');
 
   const handleSearch = () => {
     onSearch(city); // Pass the city to the parent component
+    setCity(''); //clear field after search
   };
 
   return (
-    <div>
+    <div className="search-container">
       <input
         type="text"
         placeholder="Enter city name"

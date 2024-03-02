@@ -4,11 +4,13 @@ import SearchBar from './components/SearchBar';
 import WeatherDisplay from './components/WeatherDisplay';
 import RecentSearches from './components/RecentSearches';
 import './App.css'
+import Snackbar from './components/Snackbar';
 
 function App() {
 
   const [weather, setWeather] = useState(null);
   const [searchHistory, setSearchHistory] = useState([]);
+  const [snackbarMessage, setSnackbarMessage] = useState('');
 
   const handleSearch = async (city) => {
     try {
@@ -24,8 +26,28 @@ function App() {
       setSearchHistory((prevHistory) => [city, ...prevHistory.slice(0, 4)]);
     } catch (error) {
       console.error('Error fetching weather data:', error);
-      Alert('Error fetching weather data:', error)
-      // Handle error (display a message to the user)
+    let errorMessage = 'An unexpected error occurred. Please try again later.';
+
+    if (error.response) {
+      const status = error.response.status;
+      if (status === 400) {
+        errorMessage = 'Bad Request. Please check your input and try again.';
+      } else if (status === 401) {
+        errorMessage = 'Unauthorized. Please provide a valid API token.';
+      } else if (status === 404) {
+        errorMessage = 'Not Found. Data with requested parameters does not exist.';
+      } else if (status === 429) {
+        errorMessage = 'Too Many Requests. Please wait before trying again.';
+      } else if (status >= 500 && status < 600) {
+        errorMessage = 'Unexpected Error. Please contact support.';
+      }
+    } else if (error.request) {
+      errorMessage = 'No response received. Please check your internet connection.';
+    } else {
+      errorMessage = 'Error setting up request. Please try again later.';
+    }
+
+    setSnackbarMessage(errorMessage);
     }
   };
 
@@ -37,6 +59,7 @@ function App() {
       <SearchBar onSearch={handleSearch} />
       {weather && <WeatherDisplay weather={weather} />}
       <RecentSearches history={searchHistory} onSearch={handleSearch} />
+      {snackbarMessage && <Snackbar message={snackbarMessage} />}
     </div>
     </>
   )
